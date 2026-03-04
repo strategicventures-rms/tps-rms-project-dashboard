@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TPS &amp; RMS Project Dashboard – Light Theme (HiFi Prototype – FULL)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --bg-alt: #ffffff;
+      --card-bg: #ffffff;
+      --card-alt: #f0f3fa;
+      --accent: #1f6fe5;
+      --accent-soft: rgba(31,111,229,0.08);
+      --accent-strong: #ffb74d;
+      --border-soft: #d3d9ea;
+      --border-strong: #b3bedb;
+      --text-main: #1c2340;
+      --text-soft: #4d5676;
+      --text-muted: #8a92af;
+      --danger: #d32f2f;
+      --success: #2e7d32;
+      --warn: #f9a825;
+      --pending: #757575;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --shadow-soft: 0 18px 38px rgba(146,159,191,0.35);
+      --shadow-chip: 0 4px 10px rgba(146,159,191,0.55);
+      --timeline: #ffd600;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0, #f2f4fb 45%, #e5e9f5 100%);
+      color: var(--text-main);
+      padding: 24px;
+    }
+
+    .page {
+      max-width: 1480px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
+      border-radius: 16px;
+      border: 1px solid rgba(176,186,214,0.7);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 22px 26px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .title-block h1 {
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .title-block p {
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--text-soft);
+      background: #f6f8ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: default;
+    }
+
+    .pill a { color: inherit; text-decoration: none; }
+
+    .pill strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .pill.clickable {
+      cursor: pointer;
+      background: #e3edff;
+      border-color: #1f6fe5;
+      color: #1f6fe5;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-pending { background: var(--pending); }
+    .dot-progress { background: var(--accent); }
+    .dot-complete { background: var(--success); }
+    .dot-signoff { background: var(--warn); }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
+      gap: 1px;
+      margin-bottom: 6px;
+      align-items: flex-start;
+    }
+
+    .timeline-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 4px 8px;
+    }
+
+    .timeline-cell {
+      background: #fffde7;
+      border-radius: 8px;
+      border: 1px solid #ffe082;
+      padding: 4px 6px;
+      font-size: 11px;
+      color: #795548;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-align: center;
+      min-height: 30px;
+      flex-direction: column;
+    }
+
+    .timeline-select {
+      border-radius: 999px;
+      border: 1px solid #ffe082;
+      padding: 2px 6px;
+      font-size: 11px;
+      background: #fffef5;
+      color: #5d4037;
+      width: 100%;
+    }
+
+    .timeline-marker {
+      width: 2px;
+      height: 32px;
+      background: var(--timeline);
+      margin: 0 auto 2px;
+      border-radius: 999px;
+    }
+
+    .activity-note {
+      font-size: 11px;
+      color: #5d4037;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .grid-header {
+      display: grid;
+      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
+      gap: 1px;
+      background: var(--border-soft);
+      border-radius: 10px 10px 0 0;
+      overflow: hidden;
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
+
+    .grid-header div {
+      background: #eef2ff;
+      padding: 9px 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .grid-header div:first-child {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .section {
+      margin-top: 10px;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      background: #f7f8ff;
+    }
+
+    .section-header-row {
+      display: grid;
+      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
+      background: linear-gradient(90deg, rgba(31,111,229,0.08), rgba(31,111,229,0));
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .section-header {
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: #e3edff;
+    }
+
+    .section-type {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
+      gap: 1px;
+      background: var(--border-soft);
+    }
+
+    .cell {
+      background: var(--card-bg);
+      padding: 8px 8px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .cell.module {
+      font-size: 12px;
+      color: var(--text-main);
+      font-weight: 600;
+      background: linear-gradient(90deg, #ffffff 0, #eef3ff 60%);
+      position: relative;
+    }
+
+    .cell.module span.sub {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    select.status-select {
+      width: 100%;
+      max-width: 96px;
+      margin: 0 auto;
+      padding: 3px 4px;
+      font-size: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: var(--pending);
+      text-align: center;
+      box-shadow: var(--shadow-chip);
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+      background-position: calc(100% - 10px) 8px, calc(100% - 6px) 8px;
+      background-size: 4px 4px, 4px 4px;
+      background-repeat: no-repeat;
+    }
+
+    select.status-select.complete { color: var(--success); border-color: rgba(46,125,50,0.6); background-color: rgba(76,175,80,0.06); }
+    select.status-select.progress { color: var(--accent); border-color: rgba(31,111,229,0.7); background-color: rgba(31,111,229,0.08); }
+    select.status-select.signoff { color: var(--warn); border-color: rgba(249,168,37,0.7); background-color: rgba(249,168,37,0.08); }
+    select.status-select.signoff-req { color: var(--danger); border-color: rgba(211,47,47,0.7); background-color: rgba(211,47,47,0.08); }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.65);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 14px;
+      width: 92%;
+      max-width: 1380px;
+      max-height: 92vh;
+      overflow: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #999;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
+  <script>
+    function applyStatusStyle(select) {
+      select.classList.remove('complete','progress','signoff','signoff-req');
+      switch (select.value) {
+        case 'Complete': select.classList.add('complete'); break;
+        case 'In Progress': select.classList.add('progress'); break;
+        case 'Sign-off': select.classList.add('signoff'); break;
+        case 'Sign-off Req.': select.classList.add('signoff-req'); break;
+      }
+    }
+
+    function initStatusSelects() {
+      document.querySelectorAll('select.status-select').forEach(sel => {
+        applyStatusStyle(sel);
+        sel.addEventListener('change', () => applyStatusStyle(sel));
+      });
+    }
+
+    function openRMSModal() {
+      document.getElementById('rmsModal').style.display = 'flex';
+    }
+
+    function closeRMSModal() {
+      document.getElementById('rmsModal').style.display = 'none';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initStatusSelects();
+      document.addEventListener('keydown', e => { if (e.key === "Escape") closeRMSModal(); });
+    });
+  </script>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="title-block">
+      <h1>TPS &amp; RMS PROJECT DASHBOARD</h1>
+      <p>Therapy Practice System (TPS) and Rehabilitation Management System (RMS) – phased implementation by discipline and module</p>
+    </div>
+    <div class="meta">
+      <div class="pill">Portfolio <strong>TPS + RMS</strong></div>
+      <div class="pill">View <strong>Discipline &amp; Module</strong></div>
+      <div class="pill">Timeline <strong>Milestones</strong></div>
+      <div class="pill clickable" onclick="openRMSModal()">RMS Integrations <strong>Stage Overview</strong></div>
+    </div>
+  </div>
+
+  <!-- STATUS LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot dot-pending"></span> Pending</div>
+    <div class="legend-item"><span class="legend-dot dot-progress"></span> In Progress</div>
+    <div class="legend-item"><span class="legend-dot dot-complete"></span> Complete</div>
+    <div class="legend-item"><span class="legend-dot dot-signoff"></span> Sign-off</div>
+  </div>
+
+  <!-- LAYER 1 – TIMELINE (FULLY CORRECTED) -->
+  <div class="timeline-row">
+    <div class="timeline-label"><strong>Timeline</strong> – editable phase target dates (choose one of four month‑end options per phase)</div>
+    <div><div class="timeline-cell"><span>Phase 1</span><select class="timeline-select"><option value="30 Apr">30 Apr</option><option value="31 May" selected>31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 2</span><select class="timeline-select"><option value="31 May">31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug" selected>31 Aug</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 3</span><select class="timeline-select"><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep" selected>30 Sep</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 4</span><select class="timeline-select"><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct" selected>31 Oct</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 5</span><select class="timeline-select"><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov" selected>30 Nov</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 6</span><select class="timeline-select"><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec" selected>31 Dec</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 7</span><select class="timeline-select"><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan" selected>31 Jan</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 8</span><select class="timeline-select"><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan">31 Jan</option><option value="28 Feb" selected>28 Feb</option></select></div></div>
+  </div>
+
+  <!-- LAYER 2 – DELIVERABLES -->
+  <div class="timeline-row">
+    <div class="timeline-label"><strong>Deliverables &amp; User Activities</strong></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users review and approve TPS UI with sample data and comments (discipline leads)</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users receive TPS core clinical flows and play around in sandbox (core clinical team)</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users receive ancillary RMS modules and begin end‑to‑end workflows (operations team)</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Integrated TPS + RMS with rehab tech delivered; users sign off with structured comments</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users exercise full MVP across scenarios and raise final integration feedback</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users perform formal UAT and final sign‑off for all TPS &amp; RMS integrations as per RFP</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Users complete structured training, dry runs and go‑live simulations</div></div>
+    <div><div class="timeline-marker"></div><div class="activity-note">Production go‑live, hyper‑care and handover to steady‑state support</div></div>
+  </div>
+
+  <!-- LAYER 3 – MILESTONES -->
+  <div class="timeline-row">
+    <div class="timeline-label"><strong>Project Milestones &amp; Approval Gates</strong></div>
+    <div><div class="timeline-cell" style="background:#ffebee;border-color:#ef9a9a;color:#b71c1c;"><span>Gate 1</span><span style="font-weight:600;">UI sign‑off required</span></div><div class="activity-note" style="color:#b71c1c;">Red flag: all discipline UIs must be approved before moving to Phase 2</div></div>
+    <div><div class="timeline-cell"><span>Core clinical baseline locked</span></div></div>
+    <div><div class="timeline-cell"><span>Ancillary RMS baseline locked</span></div></div>
+    <div><div class="timeline-cell"><span>Integrated TPS + RMS MVP ready</span></div></div>
+    <div><div class="timeline-cell"><span>Cloud &amp; non‑prod infra ready</span></div></div>
+    <div><div class="timeline-cell" style="background:#ffebee;border-color:#ef9a9a;color:#b71c1c;"><span>Gate 2</span><span style="font-weight:600;">Final UAT sign‑off</span></div><div class="activity-note" style="color:#b71c1c;">Red flag: final UAT sign‑off mandatory before Training &amp; Go‑Live</div></div>
+    <div><div class="timeline-cell"><span>Training complete &amp; cut‑over plan frozen</span></div></div>
+    <div><div class="timeline-cell"><span>Go‑live &amp; hyper‑care window started</span></div></div>
+  </div>
+
+  <!-- PHASE HEADER -->
+  <div class="grid-header">
+    <div>Discipline / Module</div>
+    <div>Phase 1<br><span style="font-size:10px;">UI / Workflow</span></div>
+    <div>Phase 2<br><span style="font-size:10px;">Core Clinical</span></div>
+    <div>Phase 3<br><span style="font-size:10px;">RMS Delivery</span></div>
+    <div>Phase 4<br><span style="font-size:10px;">MVP Release</span></div>
+    <div>Phase 5<br><span style="font-size:10px;">Cloud &amp; Testing</span></div>
+    <div>Phase 6<br><span style="font-size:10px;">UAT &amp; Cust. Sign-off</span></div>
+    <div>Phase 7<br><span style="font-size:10px;">Training</span></div>
+    <div>Phase 8<br><span style="font-size:10px;">Go-Live</span></div>
+  </div>
+
+  <!-- TPS – FULL 8 DISCIPLINES -->
+  <div class="section">
+    <div class="section-header-row">
+      <div class="section-header"><span class="section-tag">TPS</span> Core Clinical – Therapy Disciplines <span class="section-type">Discipline Portfolio</span></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </div>
+
+    <!-- 1 -->
+    <div class="row">
+      <div class="cell module">Physiotherapy<span class="sub">Assessment, treatment plans, outcome measures</span></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option selected>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="row">
+      <div class="cell module">Occupational Therapy<span class="sub">ADL workflows, home/work integration</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="row">
+      <div class="cell module">Speech Therapy<span class="sub">Speech, language, swallowing</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="row">
+      <div class="cell module">Psychology<span class="sub">Assessments and therapy documentation</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 5 -->
+    <div class="row">
+      <div class="cell module">Audiology<span class="sub">Assessments and hearing device workflows</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 6 -->
+    <div class="row">
+      <div class="cell module">Vision<span class="sub">Optometry and vision rehabilitation</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 7 -->
+    <div class="row">
+      <div class="cell module">Vocational Rehabilitation<span class="sub">Work readiness, training plans</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- 8 -->
+    <div class="row">
+      <div class="cell module">Dietetics<span class="sub">Diet plans, nutrition counselling</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+  </div>
+
+  <!-- RMS – FULL 19 MODULES -->
+  <div class="section" style="margin-top:14px;">
+    <div class="section-header-row">
+      <div class="section-header"><span class="section-tag">RMS</span> Rehabilitation Management – Operational Modules <span class="section-type">Module Portfolio</span></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </div>
+
+    <!-- Patient Registration (original mixed statuses) -->
+    <div class="row">
+      <div class="cell module">Patient Registration<span class="sub">Demographics, identifiers, profiles</span></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option selected>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option selected>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option selected>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option>Complete</option><option selected>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option selected>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option selected>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Room & Bed Management -->
+    <div class="row">
+      <div class="cell module">Room &amp; Bed Management<span class="sub">Occupancy, allocations, maintenance &amp; cleaning</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Billing Management -->
+    <div class="row">
+      <div class="cell module">Billing Management<span class="sub">Tariffs, packages, invoices</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Fleet Management -->
+    <div class="row">
+      <div class="cell module">Fleet Management<span class="sub">Transport, routing, tracking</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Fleet App -->
+    <div class="row">
+      <div class="cell module">Fleet App<span class="sub">Driver / attendant mobile</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Radiology -->
+    <div class="row">
+      <div class="cell module">Radiology<span class="sub">Orders, reports, PACS/RIS</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Disability Management -->
+    <div class="row">
+      <div class="cell module">Disability Management<span class="sub">Disability certificates, benefits</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Nursing -->
+    <div class="row">
+      <div class="cell module">Nursing<span class="sub">Nursing notes, vitals, orders</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Emergency Care -->
+    <div class="row">
+      <div class="cell module">Emergency Care<span class="sub">Triage, stabilization, transfers</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- ARMS -->
+    <div class="row">
+      <div class="cell module">ARMS – Referral Management<span class="sub">Intra‑ and inter‑facility referrals</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- CAMS -->
+    <div class="row">
+      <div class="cell module">CAMS – Central Appointment Management<span class="sub">Scheduling for TPS disciplines</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Allergy Master -->
+    <div class="row">
+      <div class="cell module">Allergy Master<span class="sub">Allergy registry across TPS/RMS</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- CANMS -->
+    <div class="row">
+      <div class="cell module">CANMS – Alerts &amp; Escalation Engine<span class="sub">Clinical &amp; ops alerts from TPS/RMS</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Central Tariff Master -->
+    <div class="row">
+      <div class="cell module">Central Tariff Master<span class="sub">Price lists, packages, contracts</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Medical -->
+    <div class="row">
+      <div class="cell module">Medical<span class="sub">Doctor workbench, orders, notes</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Patient Portal (View Only) -->
+    <div class="row">
+      <div class="cell module">Patient Portal (View Only)<span class="sub">Patient access to records and schedule</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Provider App (Basic) -->
+    <div class="row">
+      <div class="cell module">Provider App (Basic)<span class="sub">Mobile for doctors and therapists</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Tele-Rehabilitation -->
+    <div class="row">
+      <div class="cell module">Tele-Rehabilitation<span class="sub">Remote sessions for TPS disciplines</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+
+    <!-- Vocational Rehabilitation (RMS) -->
+    <div class="row">
+      <div class="cell module">Vocational Rehabilitation<span class="sub">Job mapping, employer coordination</span></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+      <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span>Last updated: March 2026 • All selects &amp; timeline dropdowns are fully interactive</span>
+    <span>HiFi prototype – click <strong>RMS Integrations Stage Overview</strong> in top-right for subset view</span>
+  </div>
+</div>
+
+<!-- RMS INTEGRATIONS MODAL – FULL TABLE (all 8 rows) -->
+<div id="rmsModal" class="modal" onclick="if(event.target.id==='rmsModal')closeRMSModal();">
+  <div class="modal-content" onclick="event.stopImmediatePropagation();">
+    <span class="modal-close" onclick="closeRMSModal()">&times;</span>
+    
+    <div style="padding:18px 24px;border-bottom:1px solid #e1e4f0;background:linear-gradient(90deg,#f8fafc 0%,#eef2ff 100%);position:relative;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h1 style="font-size:20px;font-weight:600;letter-spacing:0.02em;margin:0;">RMS Integrations – Stage Overview</h1>
+          <div style="font-size:13px;color:#6b7384;">One-level-above view of TPS–RMS integrations, aligned to phases and testing/acceptance.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;">
+          <span style="border-radius:999px;padding:4px 10px;background:#edf2ff;color:#4c51bf;border:1px solid #e0e7ff;font-weight:500;">Portfolio · TPS + RMS</span>
+          <span style="border-radius:999px;padding:4px 10px;background:#fef9c3;color:#92400e;border:1px solid #fce588;font-weight:600;">Milestones</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#6b7384;">
+        <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#eef2ff;"></span> Pending</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#ebf8ff;"></span> In Progress</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#e6fffa;"></span> Complete</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#fff7ed;"></span> Sign‑off</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#fef2f2;"></span> Sign‑off Required</div>
+      </div>
+    </div>
+
+    <div style="padding:12px 20px 20px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead style="background:#f8fafc;">
+          <tr>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;">Stage</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;width:26%;">Integration Family</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;width:9%;">Internal / External</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;width:12%;">Clinical / Ops</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;width:8%;">Phase</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;">Integration &amp; Testing</th>
+            <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;">Customer Acceptance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">1.1 TPS baseline</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">TPS core clinical application</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical core</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 1</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#e6fffa;color:#047857;border:1px solid #a7f3d0;">Complete</span><div style="font-size:11px;color:#6b7384;margin-top:3px;">Core build &amp; system tests</div></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#fef2f2;color:#c53030;border:1px solid #fecaca;">Sign‑off Req</span><div style="font-size:11px;color:#6b7384;margin-top:3px;">UI &amp; workflow sign‑off gate</div></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">1.2 TPS–RMS EMR</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">TPS–RMS EMR, shared patient / episode, ICD‑ICF‑ICHI</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical core</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 1</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#ebf8ff;color:#2b6cb0;border:1px solid #bfdbfe;">In Progress</span><div style="font-size:11px;color:#6b7384;margin-top:3px;">API + mapping validation</div></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">1.3 Rehab devices</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Neuro / gait / rehab devices into TPS</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical core</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 1</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">1.4 Vitals</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Vital‑signs capture (manual + monitors)</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical support</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 1</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">2.x Clinical support</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Labs, radiology, medication viewer, alerts engine</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical support</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 2</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span><div style="font-size:11px;color:#6b7384;margin-top:3px;">Pattern follows Phase 1</div></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">3.x RMS ops core</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Scheduling, referrals, beds, fleet, billing, portals, media</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Internal</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Operational</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 3</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">4.x External clinical</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Govt drug, e‑Rx / allergy, SPUB, external labs &amp; imaging</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">External</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Clinical safety</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 4</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">5.x External ops</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">External EMRs/HIEs, smart partners, fleet, BI/analytics</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">External</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">Operational</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#fef9c3;color:#92400e;font-size:11px;font-weight:600;">Phase 5</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+            <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;"><span style="display:inline-flex;min-width:78px;padding:4px 10px;border-radius:999px;font-weight:600;font-size:11px;background:#eef2ff;color:#4c51bf;border:1px solid #c7d2fe;">Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
