@@ -1,0 +1,19 @@
+name: Deploy Dashboard
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate HTML
+        run: echo "Basic validation step"
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
