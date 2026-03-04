@@ -2,388 +2,223 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TPS &amp; RMS Project Dashboard – Light Theme (HiFi Prototype – FULL)</title>
+  <title>TPS &amp; RMS Project Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --bg: #f4f6fb;
-      --bg-alt: #ffffff;
-      --card-bg: #ffffff;
-      --card-alt: #f0f3fa;
-      --accent: #1f6fe5;
-      --accent-soft: rgba(31,111,229,0.08);
-      --accent-strong: #ffb74d;
-      --border-soft: #d3d9ea;
-      --border-strong: #b3bedb;
-      --text-main: #1c2340;
-      --text-soft: #4d5676;
-      --text-muted: #8a92af;
-      --danger: #d32f2f;
-      --success: #2e7d32;
-      --warn: #f9a825;
-      --pending: #757575;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --radius-sm: 6px;
+      --bg: #f4f6fb; --bg-alt: #ffffff; --card-bg: #ffffff; --card-alt: #f0f3fa;
+      --accent: #1f6fe5; --accent-soft: rgba(31,111,229,0.08); --accent-strong: #ffb74d;
+      --border-soft: #d3d9ea; --border-strong: #b3bedb;
+      --text-main: #1c2340; --text-soft: #4d5676; --text-muted: #8a92af;
+      --danger: #d32f2f; --success: #2e7d32; --warn: #f9a825; --pending: #757575;
+      --radius-lg: 14px; --radius-md: 10px; --radius-sm: 6px;
       --shadow-soft: 0 18px 38px rgba(146,159,191,0.35);
       --shadow-chip: 0 4px 10px rgba(146,159,191,0.55);
       --timeline: #ffd600;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: radial-gradient(circle at top, #ffffff 0, #f2f4fb 45%, #e5e9f5 100%);
-      color: var(--text-main);
-      padding: 24px;
+      color: var(--text-main); padding: 24px;
     }
-
     .page {
-      max-width: 1480px;
-      margin: 0 auto;
+      max-width: 1480px; margin: 0 auto;
       background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
-      border-radius: 16px;
-      border: 1px solid rgba(176,186,214,0.7);
-      box-shadow: var(--shadow-soft);
-      padding: 20px 22px 26px;
+      border-radius: 16px; border: 1px solid rgba(176,186,214,0.7);
+      box-shadow: var(--shadow-soft); padding: 20px 22px 26px;
     }
+    .header { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:12px; }
+    .title-block h1 { font-size:22px; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px; }
+    .title-block p { font-size:13px; color:var(--text-soft); }
+    .meta { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .pill { border-radius:999px; border:1px solid var(--border-strong); padding:6px 12px; font-size:11px; color:var(--text-soft); background:#f6f8ff; display:inline-flex; align-items:center; gap:6px; cursor:default; }
+    .pill a { color:inherit; text-decoration:none; }
+    .pill strong { color:var(--text-main); font-weight:600; }
+    .pill.clickable { cursor:pointer; background:#e3edff; border-color:#1f6fe5; color:#1f6fe5; }
+    .legend { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+    .legend-item { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text-soft); }
+    .legend-dot { width:10px; height:10px; border-radius:50%; }
+    .dot-pending { background:var(--pending); } .dot-progress { background:var(--accent); }
+    .dot-complete { background:var(--success); } .dot-signoff { background:var(--warn); }
+    .timeline-row { display:grid; grid-template-columns:210px repeat(8, minmax(80px, 1fr)); gap:1px; margin-bottom:6px; align-items:flex-start; }
+    .timeline-label { font-size:11px; color:var(--text-muted); padding:4px 8px; }
+    .timeline-cell { background:#fffde7; border-radius:8px; border:1px solid #ffe082; padding:4px 6px; font-size:11px; color:#795548; display:flex; align-items:center; justify-content:center; gap:4px; text-align:center; min-height:30px; flex-direction:column; }
+    .timeline-select { border-radius:999px; border:1px solid #ffe082; padding:2px 6px; font-size:11px; background:#fffef5; color:#5d4037; width:100%; }
+    .timeline-marker { width:2px; height:32px; background:var(--timeline); margin:0 auto 2px; border-radius:999px; }
+    .activity-note { font-size:11px; color:#5d4037; text-align:center; padding:0 4px; }
+    .grid-header { display:grid; grid-template-columns:210px repeat(8, minmax(80px, 1fr)); gap:1px; background:var(--border-soft); border-radius:10px 10px 0 0; overflow:hidden; margin-top:8px; margin-bottom:2px; }
+    .grid-header div { background:#eef2ff; padding:9px 8px; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); border-bottom:1px solid var(--border-soft); }
+    .grid-header div:first-child { font-size:12px; color:var(--text-soft); }
+    .section { margin-top:10px; border-radius:0 0 10px 10px; overflow:hidden; border:1px solid var(--border-soft); background:#f7f8ff; }
+    .section-header-row { display:grid; grid-template-columns:210px repeat(8, minmax(80px, 1fr)); background:linear-gradient(90deg, rgba(31,111,229,0.08), rgba(31,111,229,0)); border-bottom:1px solid var(--border-soft); }
+    .section-header { padding:7px 10px; font-size:12px; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:8px; }
+    .section-tag { font-size:10px; padding:2px 8px; border-radius:999px; border:1px solid var(--accent); color:var(--accent); background:#e3edff; }
+    .section-type { font-size:10px; color:var(--text-muted); padding:2px 8px; border-radius:999px; border:1px solid var(--border-soft); background:#ffffff; }
+    .row { display:grid; grid-template-columns:210px repeat(8, minmax(80px, 1fr)); gap:1px; background:var(--border-soft); }
+    .cell { background:var(--card-bg); padding:8px 8px; font-size:11px; color:var(--text-soft); }
+    .cell.module { font-size:12px; color:var(--text-main); font-weight:600; background:linear-gradient(90deg,#ffffff 0,#eef3ff 60%); position:relative; }
+    .cell.module span.sub { display:block; font-size:10px; color:var(--text-muted); margin-top:2px; font-weight:400; }
+    select.status-select { width:100%; max-width:96px; margin:0 auto; padding:3px 4px; font-size:10px; border-radius:999px; border:1px solid var(--border-strong); background:#ffffff; color:var(--pending); text-align:center; box-shadow:var(--shadow-chip); appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--text-muted) 50%),linear-gradient(135deg,var(--text-muted) 50%,transparent 50%); background-position:calc(100% - 10px) 8px, calc(100% - 6px) 8px; background-size:4px 4px,4px 4px; background-repeat:no-repeat; }
+    select.status-select.complete { color:var(--success); border-color:rgba(46,125,50,0.6); background-color:rgba(76,175,80,0.06); }
+    select.status-select.progress { color:var(--accent); border-color:rgba(31,111,229,0.7); background-color:rgba(31,111,229,0.08); }
+    select.status-select.signoff { color:var(--warn); border-color:rgba(249,168,37,0.7); background-color:rgba(249,168,37,0.08); }
+    select.status-select.signoff-req { color:var(--danger); border-color:rgba(211,47,47,0.7); background-color:rgba(211,47,47,0.08); }
+    select.status-select:disabled { opacity:1; cursor:default; pointer-events:none; }
+    .footer-note { margin-top:14px; font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.65); align-items:center; justify-content:center; }
+    .modal-content { background:white; border-radius:14px; width:92%; max-width:1380px; max-height:92vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .modal-close { position:absolute; top:18px; right:24px; font-size:28px; font-weight:bold; color:#999; cursor:pointer; z-index:10; }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 12px;
+    /* ─── ADMIN / VIEWER UI ─── */
+    .admin-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 14px; border-radius: 10px; margin-bottom: 14px;
+      font-size: 12px; background: #f0f3fa; border: 1px solid var(--border-soft);
+      flex-wrap: wrap; gap: 8px;
     }
-
-    .title-block h1 {
-      font-size: 22px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+    .admin-bar.mode-admin { background: #e8f0fe; border-color: #1f6fe5; }
+    .admin-bar-left { display: flex; align-items: center; gap: 10px; }
+    .admin-bar-right { display: flex; align-items: center; gap: 8px; }
+    .mode-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
     }
-
-    .title-block p {
-      font-size: 13px;
-      color: var(--text-soft);
+    .mode-badge.viewer { background: #eee; color: #555; }
+    .mode-badge.admin { background: #1f6fe5; color: #fff; }
+    .admin-btn {
+      padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border-strong);
+      font-size: 11px; font-weight: 600; cursor: pointer; background: white; color: var(--text-main);
+      transition: all 0.15s;
     }
-
-    .meta {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
+    .admin-btn:hover { background: #eef2ff; border-color: var(--accent); color: var(--accent); }
+    .admin-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .admin-btn.primary:hover { background: #1559c0; }
+    .admin-btn.danger { background: white; color: var(--danger); border-color: rgba(211,47,47,0.4); }
+    .admin-btn.danger:hover { background: #fef2f2; }
+    .save-toast {
+      font-size: 11px; padding: 3px 10px; border-radius: 999px;
+      background: #e6ffea; color: #2e7d32; border: 1px solid #a7f3d0;
+      opacity: 0; transition: opacity 0.3s;
     }
-
-    .pill {
-      border-radius: 999px;
-      border: 1px solid var(--border-strong);
-      padding: 6px 12px;
-      font-size: 11px;
-      color: var(--text-soft);
-      background: #f6f8ff;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: default;
+    .save-toast.show { opacity: 1; }
+    .save-toast.saving { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
+    .add-row-btn {
+      display: none; margin: 6px 0 0 10px;
+      padding: 4px 12px; border-radius: 999px;
+      border: 1px dashed var(--accent); color: var(--accent);
+      font-size: 11px; cursor: pointer; background: rgba(31,111,229,0.04);
+      font-weight: 600; transition: all 0.15s;
     }
-
-    .pill a { color: inherit; text-decoration: none; }
-
-    .pill strong {
-      color: var(--text-main);
-      font-weight: 600;
+    .add-row-btn:hover { background: rgba(31,111,229,0.1); }
+    body.admin-mode .add-row-btn { display: inline-flex; align-items: center; gap: 4px; }
+    .delete-row-btn {
+      display: none; position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #d32f2f;
+      font-size: 14px; padding: 2px 4px; opacity: 0.5;
     }
-
-    .pill.clickable {
-      cursor: pointer;
-      background: #e3edff;
-      border-color: #1f6fe5;
-      color: #1f6fe5;
+    .delete-row-btn:hover { opacity: 1; }
+    body.admin-mode .row.custom-row .delete-row-btn { display: block; }
+    .row.custom-row .cell.module { position: relative; }
+    .section-actions {
+      display: none; background: #f0f5ff; border-top: 1px solid var(--border-soft); padding: 8px 10px;
     }
+    body.admin-mode .section-actions { display: block; }
 
-    .legend {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+    /* ─── OVERLAY MODALS (login / add row) ─── */
+    .overlay-modal {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0;
+      width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+      align-items: center; justify-content: center;
     }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--text-soft);
+    .overlay-modal.open { display: flex; }
+    .overlay-modal-box {
+      background: white; border-radius: 14px; padding: 28px 32px;
+      width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+    .overlay-modal-box h3 { font-size: 16px; margin-bottom: 16px; color: var(--text-main); }
+    .modal-field { margin-bottom: 12px; }
+    .modal-field label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .modal-field input, .modal-field select {
+      width: 100%; padding: 8px 12px; border: 1px solid var(--border-strong);
+      border-radius: 8px; font-size: 13px; color: var(--text-main);
+      outline: none; transition: border-color 0.2s;
     }
-
-    .dot-pending { background: var(--pending); }
-    .dot-progress { background: var(--accent); }
-    .dot-complete { background: var(--success); }
-    .dot-signoff { background: var(--warn); }
-
-    .timeline-row {
-      display: grid;
-      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
-      gap: 1px;
-      margin-bottom: 6px;
-      align-items: flex-start;
+    .modal-field input:focus, .modal-field select:focus { border-color: var(--accent); }
+    .modal-error { font-size: 12px; color: var(--danger); margin-bottom: 8px; min-height: 16px; }
+    .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+    .firebase-config-notice {
+      background: #fffde7; border: 1px solid #ffe082; border-radius: 10px;
+      padding: 12px 14px; font-size: 12px; color: #795548; margin-bottom: 14px;
     }
-
-    .timeline-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      padding: 4px 8px;
-    }
-
-    .timeline-cell {
-      background: #fffde7;
-      border-radius: 8px;
-      border: 1px solid #ffe082;
-      padding: 4px 6px;
-      font-size: 11px;
-      color: #795548;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      text-align: center;
-      min-height: 30px;
-      flex-direction: column;
-    }
-
-    .timeline-select {
-      border-radius: 999px;
-      border: 1px solid #ffe082;
-      padding: 2px 6px;
-      font-size: 11px;
-      background: #fffef5;
-      color: #5d4037;
-      width: 100%;
-    }
-
-    .timeline-marker {
-      width: 2px;
-      height: 32px;
-      background: var(--timeline);
-      margin: 0 auto 2px;
-      border-radius: 999px;
-    }
-
-    .activity-note {
-      font-size: 11px;
-      color: #5d4037;
-      text-align: center;
-      padding: 0 4px;
-    }
-
-    .grid-header {
-      display: grid;
-      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
-      gap: 1px;
-      background: var(--border-soft);
-      border-radius: 10px 10px 0 0;
-      overflow: hidden;
-      margin-top: 8px;
-      margin-bottom: 2px;
-    }
-
-    .grid-header div {
-      background: #eef2ff;
-      padding: 9px 8px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .grid-header div:first-child {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .section {
-      margin-top: 10px;
-      border-radius: 0 0 10px 10px;
-      overflow: hidden;
-      border: 1px solid var(--border-soft);
-      background: #f7f8ff;
-    }
-
-    .section-header-row {
-      display: grid;
-      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
-      background: linear-gradient(90deg, rgba(31,111,229,0.08), rgba(31,111,229,0));
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .section-header {
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-tag {
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      background: #e3edff;
-    }
-
-    .section-type {
-      font-size: 10px;
-      color: var(--text-muted);
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: #ffffff;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 210px repeat(8, minmax(80px, 1fr));
-      gap: 1px;
-      background: var(--border-soft);
-    }
-
-    .cell {
-      background: var(--card-bg);
-      padding: 8px 8px;
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .cell.module {
-      font-size: 12px;
-      color: var(--text-main);
-      font-weight: 600;
-      background: linear-gradient(90deg, #ffffff 0, #eef3ff 60%);
-      position: relative;
-    }
-
-    .cell.module span.sub {
-      display: block;
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      font-weight: 400;
-    }
-
-    select.status-select {
-      width: 100%;
-      max-width: 96px;
-      margin: 0 auto;
-      padding: 3px 4px;
-      font-size: 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border-strong);
-      background: #ffffff;
-      color: var(--pending);
-      text-align: center;
-      box-shadow: var(--shadow-chip);
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-      background-position: calc(100% - 10px) 8px, calc(100% - 6px) 8px;
-      background-size: 4px 4px, 4px 4px;
-      background-repeat: no-repeat;
-    }
-
-    select.status-select.complete { color: var(--success); border-color: rgba(46,125,50,0.6); background-color: rgba(76,175,80,0.06); }
-    select.status-select.progress { color: var(--accent); border-color: rgba(31,111,229,0.7); background-color: rgba(31,111,229,0.08); }
-    select.status-select.signoff { color: var(--warn); border-color: rgba(249,168,37,0.7); background-color: rgba(249,168,37,0.08); }
-    select.status-select.signoff-req { color: var(--danger); border-color: rgba(211,47,47,0.7); background-color: rgba(211,47,47,0.08); }
-
-    .footer-note {
-      margin-top: 14px;
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.65);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background: white;
-      border-radius: 14px;
-      width: 92%;
-      max-width: 1380px;
-      max-height: 92vh;
-      overflow: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    .modal-close {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      font-size: 28px;
-      font-weight: bold;
-      color: #999;
-      cursor: pointer;
-      z-index: 10;
-    }
+    .firebase-config-notice strong { color: #e65100; }
   </style>
-  <script>
-    function applyStatusStyle(select) {
-      select.classList.remove('complete','progress','signoff','signoff-req');
-      switch (select.value) {
-        case 'Complete': select.classList.add('complete'); break;
-        case 'In Progress': select.classList.add('progress'); break;
-        case 'Sign-off': select.classList.add('signoff'); break;
-        case 'Sign-off Req.': select.classList.add('signoff-req'); break;
-      }
-    }
-
-    function initStatusSelects() {
-      document.querySelectorAll('select.status-select').forEach(sel => {
-        applyStatusStyle(sel);
-        sel.addEventListener('change', () => applyStatusStyle(sel));
-      });
-    }
-
-    function openRMSModal() {
-      document.getElementById('rmsModal').style.display = 'flex';
-    }
-
-    function closeRMSModal() {
-      document.getElementById('rmsModal').style.display = 'none';
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initStatusSelects();
-      document.addEventListener('keydown', e => { if (e.key === "Escape") closeRMSModal(); });
-    });
-  </script>
 </head>
 <body>
+
+<!-- ═══ LOGIN MODAL ═══ -->
+<div id="loginModal" class="overlay-modal">
+  <div class="overlay-modal-box">
+    <h3>🔑 Admin Login</h3>
+    <div class="modal-field">
+      <label>Email</label>
+      <input type="email" id="adminEmail" placeholder="admin@yourproject.com" />
+    </div>
+    <div class="modal-field">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div class="modal-error" id="loginError"></div>
+    <div class="modal-buttons">
+      <button class="admin-btn" onclick="document.getElementById('loginModal').classList.remove('open')">Cancel</button>
+      <button class="admin-btn primary" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD ROW MODAL ═══ -->
+<div id="addRowModal" class="overlay-modal">
+  <div class="overlay-modal-box">
+    <h3>➕ Add New Row</h3>
+    <div class="modal-field">
+      <label>Section</label>
+      <select id="newRowSection">
+        <option value="sec-0">TPS Core Clinical – Therapy Disciplines</option>
+        <option value="sec-1">RMS Rehabilitation – Operational Modules</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Module / Discipline Name</label>
+      <input type="text" id="newRowModule" placeholder="e.g. Pain Management" />
+    </div>
+    <div class="modal-field">
+      <label>Subtitle</label>
+      <input type="text" id="newRowSub" placeholder="e.g. Assessment and treatment protocols" />
+    </div>
+    <div class="modal-error" id="addRowError"></div>
+    <div class="modal-buttons">
+      <button class="admin-btn" onclick="document.getElementById('addRowModal').classList.remove('open')">Cancel</button>
+      <button class="admin-btn primary" onclick="submitNewRow()">Add Row</button>
+    </div>
+  </div>
+</div>
+
 <div class="page">
+
+  <!-- ═══ ADMIN / VIEWER BAR ═══ -->
+  <div id="adminBar" class="admin-bar">
+    <div class="admin-bar-left">
+      <span id="modeBadge" class="mode-badge viewer">👁 View-Only Mode</span>
+      <span id="firebaseStatus" style="font-size:11px;color:var(--text-muted);">Connecting…</span>
+    </div>
+    <div class="admin-bar-right">
+      <span id="saveToast" class="save-toast"></span>
+      <button id="loginBtn" class="admin-btn primary" onclick="document.getElementById('loginModal').classList.add('open')">🔑 Admin Login</button>
+      <button id="logoutBtn" class="admin-btn danger" style="display:none" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE HEADER ═══ -->
   <div class="header">
     <div class="title-block">
       <h1>TPS &amp; RMS PROJECT DASHBOARD</h1>
@@ -405,17 +240,17 @@
     <div class="legend-item"><span class="legend-dot dot-signoff"></span> Sign-off</div>
   </div>
 
-  <!-- LAYER 1 – TIMELINE (FULLY CORRECTED) -->
+  <!-- LAYER 1 – TIMELINE -->
   <div class="timeline-row">
-    <div class="timeline-label"><strong>Timeline</strong> – editable phase target dates (choose one of four month‑end options per phase)</div>
-    <div><div class="timeline-cell"><span>Phase 1</span><select class="timeline-select"><option value="30 Apr">30 Apr</option><option value="31 May" selected>31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 2</span><select class="timeline-select"><option value="31 May">31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug" selected>31 Aug</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 3</span><select class="timeline-select"><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep" selected>30 Sep</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 4</span><select class="timeline-select"><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct" selected>31 Oct</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 5</span><select class="timeline-select"><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov" selected>30 Nov</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 6</span><select class="timeline-select"><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec" selected>31 Dec</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 7</span><select class="timeline-select"><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan" selected>31 Jan</option></select></div></div>
-    <div><div class="timeline-cell"><span>Phase 8</span><select class="timeline-select"><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan">31 Jan</option><option value="28 Feb" selected>28 Feb</option></select></div></div>
+    <div class="timeline-label"><strong>Timeline</strong> – editable phase target dates</div>
+    <div><div class="timeline-cell"><span>Phase 1</span><select class="timeline-select" data-tl="0"><option value="30 Apr">30 Apr</option><option value="31 May" selected>31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 2</span><select class="timeline-select" data-tl="1"><option value="31 May">31 May</option><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug" selected>31 Aug</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 3</span><select class="timeline-select" data-tl="2"><option value="30 Jun">30 Jun</option><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep" selected>30 Sep</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 4</span><select class="timeline-select" data-tl="3"><option value="31 Jul">31 Jul</option><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct" selected>31 Oct</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 5</span><select class="timeline-select" data-tl="4"><option value="31 Aug">31 Aug</option><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov" selected>30 Nov</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 6</span><select class="timeline-select" data-tl="5"><option value="30 Sep">30 Sep</option><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec" selected>31 Dec</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 7</span><select class="timeline-select" data-tl="6"><option value="31 Oct">31 Oct</option><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan" selected>31 Jan</option></select></div></div>
+    <div><div class="timeline-cell"><span>Phase 8</span><select class="timeline-select" data-tl="7"><option value="30 Nov">30 Nov</option><option value="31 Dec">31 Dec</option><option value="31 Jan">31 Jan</option><option value="28 Feb" selected>28 Feb</option></select></div></div>
   </div>
 
   <!-- LAYER 2 – DELIVERABLES -->
@@ -457,15 +292,13 @@
     <div>Phase 8<br><span style="font-size:10px;">Go-Live</span></div>
   </div>
 
-  <!-- TPS – FULL 8 DISCIPLINES -->
-  <div class="section">
+  <!-- ═══ TPS SECTION ═══ -->
+  <div class="section" id="sec-0">
     <div class="section-header-row">
       <div class="section-header"><span class="section-tag">TPS</span> Core Clinical – Therapy Disciplines <span class="section-type">Discipline Portfolio</span></div>
       <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
     </div>
-
-    <!-- 1 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r0">
       <div class="cell module">Physiotherapy<span class="sub">Assessment, treatment plans, outcome measures</span></div>
       <div class="cell"><select class="status-select"><option>Pending</option><option selected>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -476,9 +309,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 2 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r1">
       <div class="cell module">Occupational Therapy<span class="sub">ADL workflows, home/work integration</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -489,9 +320,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 3 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r2">
       <div class="cell module">Speech Therapy<span class="sub">Speech, language, swallowing</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -502,9 +331,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 4 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r3">
       <div class="cell module">Psychology<span class="sub">Assessments and therapy documentation</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -515,9 +342,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 5 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r4">
       <div class="cell module">Audiology<span class="sub">Assessments and hearing device workflows</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -528,9 +353,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 6 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r5">
       <div class="cell module">Vision<span class="sub">Optometry and vision rehabilitation</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -541,9 +364,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 7 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r6">
       <div class="cell module">Vocational Rehabilitation<span class="sub">Work readiness, training plans</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -554,9 +375,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- 8 -->
-    <div class="row">
+    <div class="row" data-row-id="s0-r7">
       <div class="cell module">Dietetics<span class="sub">Diet plans, nutrition counselling</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -567,17 +386,18 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
+    <div class="section-actions">
+      <button class="add-row-btn" onclick="openAddRow('sec-0')">＋ Add Row to TPS Section</button>
+    </div>
   </div>
 
-  <!-- RMS – FULL 19 MODULES -->
-  <div class="section" style="margin-top:14px;">
+  <!-- ═══ RMS SECTION ═══ -->
+  <div class="section" id="sec-1" style="margin-top:14px;">
     <div class="section-header-row">
       <div class="section-header"><span class="section-tag">RMS</span> Rehabilitation Management – Operational Modules <span class="section-type">Module Portfolio</span></div>
       <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
     </div>
-
-    <!-- Patient Registration (original mixed statuses) -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r0">
       <div class="cell module">Patient Registration<span class="sub">Demographics, identifiers, profiles</span></div>
       <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option selected>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option>Pending</option><option>In Progress</option><option selected>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -588,9 +408,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Room & Bed Management -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r1">
       <div class="cell module">Room &amp; Bed Management<span class="sub">Occupancy, allocations, maintenance &amp; cleaning</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -601,9 +419,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Billing Management -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r2">
       <div class="cell module">Billing Management<span class="sub">Tariffs, packages, invoices</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -614,9 +430,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Fleet Management -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r3">
       <div class="cell module">Fleet Management<span class="sub">Transport, routing, tracking</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -627,9 +441,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Fleet App -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r4">
       <div class="cell module">Fleet App<span class="sub">Driver / attendant mobile</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -640,9 +452,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Radiology -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r5">
       <div class="cell module">Radiology<span class="sub">Orders, reports, PACS/RIS</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -653,9 +463,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Disability Management -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r6">
       <div class="cell module">Disability Management<span class="sub">Disability certificates, benefits</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -666,9 +474,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Nursing -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r7">
       <div class="cell module">Nursing<span class="sub">Nursing notes, vitals, orders</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -679,9 +485,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Emergency Care -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r8">
       <div class="cell module">Emergency Care<span class="sub">Triage, stabilization, transfers</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -692,9 +496,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- ARMS -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r9">
       <div class="cell module">ARMS – Referral Management<span class="sub">Intra‑ and inter‑facility referrals</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -705,9 +507,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- CAMS -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r10">
       <div class="cell module">CAMS – Central Appointment Management<span class="sub">Scheduling for TPS disciplines</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -718,9 +518,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Allergy Master -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r11">
       <div class="cell module">Allergy Master<span class="sub">Allergy registry across TPS/RMS</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -731,9 +529,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- CANMS -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r12">
       <div class="cell module">CANMS – Alerts &amp; Escalation Engine<span class="sub">Clinical &amp; ops alerts from TPS/RMS</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -744,9 +540,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Central Tariff Master -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r13">
       <div class="cell module">Central Tariff Master<span class="sub">Price lists, packages, contracts</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -757,9 +551,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Medical -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r14">
       <div class="cell module">Medical<span class="sub">Doctor workbench, orders, notes</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -770,9 +562,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Patient Portal (View Only) -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r15">
       <div class="cell module">Patient Portal (View Only)<span class="sub">Patient access to records and schedule</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -783,9 +573,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Provider App (Basic) -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r16">
       <div class="cell module">Provider App (Basic)<span class="sub">Mobile for doctors and therapists</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -796,9 +584,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Tele-Rehabilitation -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r17">
       <div class="cell module">Tele-Rehabilitation<span class="sub">Remote sessions for TPS disciplines</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -809,9 +595,7 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
-
-    <!-- Vocational Rehabilitation (RMS) -->
-    <div class="row">
+    <div class="row" data-row-id="s1-r18">
       <div class="cell module">Vocational Rehabilitation<span class="sub">Job mapping, employer coordination</span></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
@@ -822,19 +606,21 @@
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
       <div class="cell"><select class="status-select"><option selected>Pending</option><option>In Progress</option><option>Complete</option><option>Sign-off</option><option>Sign-off Req.</option></select></div>
     </div>
+    <div class="section-actions">
+      <button class="add-row-btn" onclick="openAddRow('sec-1')">＋ Add Row to RMS Section</button>
+    </div>
   </div>
 
   <div class="footer-note">
-    <span>Last updated: March 2026 • All selects &amp; timeline dropdowns are fully interactive</span>
-    <span>HiFi prototype – click <strong>RMS Integrations Stage Overview</strong> in top-right for subset view</span>
+    <span>Last updated: March 2026 · All selects &amp; timeline dropdowns are interactive</span>
+    <span>Click <strong>RMS Integrations Stage Overview</strong> in top-right for subset view</span>
   </div>
 </div>
 
-<!-- RMS INTEGRATIONS MODAL – FULL TABLE (all 8 rows) -->
+<!-- ═══ RMS INTEGRATIONS MODAL ═══ -->
 <div id="rmsModal" class="modal" onclick="if(event.target.id==='rmsModal')closeRMSModal();">
   <div class="modal-content" onclick="event.stopImmediatePropagation();">
     <span class="modal-close" onclick="closeRMSModal()">&times;</span>
-    
     <div style="padding:18px 24px;border-bottom:1px solid #e1e4f0;background:linear-gradient(90deg,#f8fafc 0%,#eef2ff 100%);position:relative;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div>
@@ -854,7 +640,6 @@
         <div style="display:inline-flex;align-items:center;gap:6px;"><span style="width:36px;height:16px;border-radius:999px;border:1px solid #e1e4f0;background:#fef2f2;"></span> Sign‑off Required</div>
       </div>
     </div>
-
     <div style="padding:12px 20px 20px;">
       <table style="width:100%;border-collapse:collapse;font-size:12px;">
         <thead style="background:#f8fafc;">
@@ -868,7 +653,7 @@
             <th style="padding:10px 8px;text-align:left;font-weight:600;color:#6b7384;border-bottom:1px solid #e1e4f0;">Customer Acceptance</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="rmsTableBody">
           <tr>
             <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">1.1 TPS baseline</td>
             <td style="padding:9px 8px;border-bottom:1px solid #e1e4f0;">TPS core clinical application</td>
@@ -947,55 +732,379 @@
   </div>
 </div>
 
-  <!--
-  <div>
-    <h1>FireBase DB Write</h1>
-    <div id="projectList"></div>
-  </div>-->
+<!-- ═══════════════════════════════════════════════════════════
+     FIREBASE SETUP INSTRUCTIONS
+     ═══════════════════════════════════════════════════════════
+  1. Go to https://console.firebase.google.com
+  2. Create a new project (or use existing)
+  3. Add a Web App → copy the firebaseConfig object
+  4. Enable Firestore Database → Start in production mode
+  5. In Firestore Rules, paste:
+       rules_version = '2';
+       service cloud.firestore {
+         match /databases/{database}/documents {
+           match /{document=**} {
+             allow read: if true;
+             allow write: if request.auth != null;
+           }
+         }
+       }
+  6. Enable Authentication → Sign-in method → Email/Password → Enable
+  7. In Authentication → Users → Add user (your admin email + password)
+  8. Paste your config into the firebaseConfig object below
+  ══════════════════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  
-<!--Firebase DB Script-->
-  <script type="module">
-    import { initializeApp } from 
-    "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  
-    import { getFirestore, collection, getDocs }
-    from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+<script>
+// ── STEP 1: Replace with YOUR Firebase config ──────────────────
+const firebaseConfig = {
+    apiKey: "AIzaSyCQICBEn5k0gvPjyJ164le7zG4Z1wmvV5o",
+    authDomain: "tps-rms-dashboard.firebaseapp.com",
+    projectId: "tps-rms-dashboard",
+    storageBucket: "tps-rms-dashboard.firebasestorage.app",
+    messagingSenderId: "178185203959",
+    appId: "1:178185203959:web:e8543cab9da712789263f2"
+};
+// ───────────────────────────────────────────────────────────────
 
-    const firebaseConfig = {
-      apiKey: "__FIREBASE_API_KEY__",
-      authDomain: "__FIREBASE_AUTH_DOMAIN__",
-      projectId: "__FIREBASE_PROJECT_ID__",
-      storageBucket: "__FIREBASE_STORAGE_BUCKET__",
-      messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
-      appId: "__FIREBASE_APP_ID__"
-    };
-  
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-  
-    async function loadProjects() {
-      const querySnapshot = await getDocs(collection(db, "projects"));
-      const container = document.getElementById("projectList");
-      container.innerHTML = "";
-  
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        container.innerHTML += `
-          <div>
-            <h3>${data.name}</h3>
-            <p>Status: ${data.status}</p>
-            <p>Owner: ${data.owner}</p>
-          </div>
-          <hr/>
-        `;
+let db, auth, unsubscribe;
+let isAdmin = false;
+let saveTimeout = null;
+let isApplyingRemoteData = false;
+
+// ── Firebase init ──────────────────────────────────────────────
+function initFirebase() {
+  const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
+  const statusEl = document.getElementById('firebaseStatus');
+
+  if (!isConfigured) {
+    statusEl.textContent = '⚠️ Firebase not configured – changes won\'t persist';
+    statusEl.style.color = '#e65100';
+    initDOMWithoutFirebase();
+    return;
+  }
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db   = firebase.firestore();
+    auth = firebase.auth();
+    statusEl.textContent = 'Connected';
+    statusEl.style.color = '#2e7d32';
+
+    auth.onAuthStateChanged(user => {
+      isAdmin = !!user;
+      setAdminMode(isAdmin);
+      updateAdminBar(user);
+    });
+
+    startSync();
+  } catch(e) {
+    statusEl.textContent = '⚠️ Firebase error: ' + e.message;
+    statusEl.style.color = '#d32f2f';
+    initDOMWithoutFirebase();
+  }
+}
+
+// ── Status styling ─────────────────────────────────────────────
+function applyStatusStyle(sel) {
+  sel.classList.remove('complete','progress','signoff','signoff-req');
+  switch(sel.value) {
+    case 'Complete':     sel.classList.add('complete'); break;
+    case 'In Progress':  sel.classList.add('progress'); break;
+    case 'Sign-off':     sel.classList.add('signoff'); break;
+    case 'Sign-off Req.':sel.classList.add('signoff-req'); break;
+  }
+}
+
+function makeStatusSelect(value) {
+  const opts = ['Pending','In Progress','Complete','Sign-off','Sign-off Req.'];
+  const sel = document.createElement('select');
+  sel.className = 'status-select';
+  opts.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o;
+    if (o === value) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  applyStatusStyle(sel);
+  sel.addEventListener('change', () => {
+    applyStatusStyle(sel);
+    debouncedSave();
+  });
+  if (!isAdmin) sel.disabled = true;
+  return sel;
+}
+
+// ── DOM initialisation without Firebase ───────────────────────
+function initDOMWithoutFirebase() {
+  document.querySelectorAll('select.status-select').forEach(sel => {
+    applyStatusStyle(sel);
+    sel.addEventListener('change', () => applyStatusStyle(sel));
+    sel.disabled = true; // viewers can't change without admin
+  });
+}
+
+// ── Assign unique data-keys to all selects ─────────────────────
+function assignDataKeys() {
+  // Main grid status selects
+  document.querySelectorAll('.section').forEach((sec, si) => {
+    sec.querySelectorAll('.row[data-row-id]').forEach(row => {
+      const rid = row.getAttribute('data-row-id');
+      row.querySelectorAll('select.status-select').forEach((sel, ci) => {
+        sel.setAttribute('data-key', `${rid}-c${ci}`);
       });
+    });
+  });
+  // Timeline selects
+  document.querySelectorAll('select.timeline-select[data-tl]').forEach(sel => {
+    sel.setAttribute('data-key', `tl-${sel.getAttribute('data-tl')}`);
+  });
+}
+
+// ── Collect current state for saving ──────────────────────────
+function collectState() {
+  const statuses = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if (el.tagName === 'SELECT') statuses[el.dataset.key] = el.value;
+  });
+
+  const customRows = {};
+  document.querySelectorAll('.section').forEach(sec => {
+    const rows = [];
+    sec.querySelectorAll('.row.custom-row').forEach(row => {
+      const modEl = row.querySelector('.cell.module');
+      const nameEl = modEl ? modEl.querySelector('strong') : null;
+      const subEl  = modEl ? modEl.querySelector('.sub') : null;
+      const statArr = Array.from(row.querySelectorAll('select.status-select')).map(s => s.value);
+      rows.push({
+        id: row.dataset.customId,
+        module: nameEl ? nameEl.textContent : '',
+        sub: subEl ? subEl.textContent : '',
+        statuses: statArr
+      });
+    });
+    if (rows.length) customRows[sec.id] = rows;
+  });
+
+  return { statuses, customRows, lastUpdated: new Date().toISOString() };
+}
+
+// ── Apply data from Firestore to DOM ──────────────────────────
+function applyData(data) {
+  isApplyingRemoteData = true;
+
+  if (data.statuses) {
+    Object.entries(data.statuses).forEach(([key, val]) => {
+      const sel = document.querySelector(`[data-key="${key}"]`);
+      if (sel) { sel.value = val; applyStatusStyle(sel); }
+    });
+  }
+
+  // Re-render custom rows for each section
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.querySelectorAll('.row.custom-row').forEach(r => r.remove());
+    const rows = data.customRows && data.customRows[sec.id];
+    if (rows) rows.forEach(rd => _appendCustomRowHTML(sec, rd));
+  });
+
+  isApplyingRemoteData = false;
+}
+
+// ── Real-time sync ────────────────────────────────────────────
+function startSync() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = db.collection('dashboard').doc('state').onSnapshot(doc => {
+    if (doc.exists) {
+      applyData(doc.data());
+    } else if (isAdmin) {
+      // First run: seed with current DOM state
+      saveNow();
     }
-  
-    loadProjects();
-  </script>
-<!--Firebase DB Script-->
+  }, err => {
+    console.error('Firestore sync error:', err);
+  });
+}
 
+// ── Save to Firestore ─────────────────────────────────────────
+function saveNow() {
+  if (!db || !isAdmin) return;
+  showToast('saving');
+  db.collection('dashboard').doc('state').set(collectState())
+    .then(() => showToast('saved'))
+    .catch(e => { console.error(e); showToast(''); });
+}
 
+function debouncedSave() {
+  if (isApplyingRemoteData) return;
+  clearTimeout(saveTimeout);
+  showToast('saving');
+  saveTimeout = setTimeout(saveNow, 900);
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+function showToast(state) {
+  const t = document.getElementById('saveToast');
+  if (state === 'saved') {
+    t.textContent = '✓ Saved'; t.className = 'save-toast show';
+    setTimeout(() => t.className = 'save-toast', 2500);
+  } else if (state === 'saving') {
+    t.textContent = 'Saving…'; t.className = 'save-toast saving show';
+  } else {
+    t.className = 'save-toast';
+  }
+}
+
+// ── Admin mode toggle ─────────────────────────────────────────
+function setAdminMode(admin) {
+  document.body.classList.toggle('admin-mode', admin);
+  document.querySelectorAll('select.status-select, select.timeline-select').forEach(sel => {
+    sel.disabled = !admin;
+  });
+  if (admin) {
+    document.querySelectorAll('select.status-select, select.timeline-select').forEach(sel => {
+      // Ensure change listeners are attached
+      sel.onchange = () => {
+        applyStatusStyle(sel);
+        debouncedSave();
+      };
+    });
+  }
+}
+
+// ── Auth UI ───────────────────────────────────────────────────
+function updateAdminBar(user) {
+  const bar    = document.getElementById('adminBar');
+  const badge  = document.getElementById('modeBadge');
+  const loginB = document.getElementById('loginBtn');
+  const logoutB= document.getElementById('logoutBtn');
+  if (user) {
+    bar.classList.add('mode-admin');
+    badge.className = 'mode-badge admin';
+    badge.textContent = '✏️ Admin Mode – ' + user.email;
+    loginB.style.display  = 'none';
+    logoutB.style.display = 'inline-flex';
+  } else {
+    bar.classList.remove('mode-admin');
+    badge.className = 'mode-badge viewer';
+    badge.textContent = '👁 View-Only Mode';
+    loginB.style.display  = 'inline-flex';
+    logoutB.style.display = 'none';
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass  = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; return; }
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => {
+      document.getElementById('loginModal').classList.remove('open');
+      document.getElementById('adminPass').value = '';
+    })
+    .catch(e => {
+      errEl.textContent = e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password'
+        ? 'Invalid email or password.' : e.message;
+    });
+}
+
+function doLogout() {
+  auth.signOut();
+}
+
+// ── Add Row ───────────────────────────────────────────────────
+function openAddRow(secId) {
+  document.getElementById('newRowSection').value = secId;
+  document.getElementById('newRowModule').value  = '';
+  document.getElementById('newRowSub').value     = '';
+  document.getElementById('addRowError').textContent = '';
+  document.getElementById('addRowModal').classList.add('open');
+  setTimeout(() => document.getElementById('newRowModule').focus(), 100);
+}
+
+function submitNewRow() {
+  const secId = document.getElementById('newRowSection').value;
+  const mod   = document.getElementById('newRowModule').value.trim();
+  const sub   = document.getElementById('newRowSub').value.trim();
+  const errEl = document.getElementById('addRowError');
+  if (!mod) { errEl.textContent = 'Module name is required.'; return; }
+  errEl.textContent = '';
+
+  const sec = document.getElementById(secId);
+  if (!sec) return;
+
+  const id = 'cr-' + Date.now();
+  _appendCustomRowHTML(sec, { id, module: mod, sub, statuses: Array(8).fill('Pending') });
+  document.getElementById('addRowModal').classList.remove('open');
+  debouncedSave();
+}
+
+function _appendCustomRowHTML(sec, rowData) {
+  const row = document.createElement('div');
+  row.className = 'row custom-row';
+  row.dataset.customId = rowData.id;
+
+  const moduleCell = document.createElement('div');
+  moduleCell.className = 'cell module';
+  moduleCell.innerHTML = `<strong>${rowData.module}</strong><span class="sub">${rowData.sub || ''}</span>`;
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-row-btn';
+  delBtn.title = 'Delete row';
+  delBtn.innerHTML = '🗑';
+  delBtn.onclick = () => {
+    if (confirm(`Delete "${rowData.module}"?`)) {
+      row.remove();
+      debouncedSave();
+    }
+  };
+  moduleCell.appendChild(delBtn);
+  row.appendChild(moduleCell);
+
+  const statuses = rowData.statuses || Array(8).fill('Pending');
+  statuses.slice(0, 8).forEach(val => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.appendChild(makeStatusSelect(val));
+    row.appendChild(cell);
+  });
+
+  // Insert before section-actions div
+  const actions = sec.querySelector('.section-actions');
+  if (actions) sec.insertBefore(row, actions);
+  else sec.appendChild(row);
+}
+
+// ── Modal helpers ─────────────────────────────────────────────
+function openRMSModal()  { document.getElementById('rmsModal').style.display = 'flex'; }
+function closeRMSModal() { document.getElementById('rmsModal').style.display = 'none'; }
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  assignDataKeys();
+
+  // Apply initial styling to all existing selects (viewer mode = disabled)
+  document.querySelectorAll('select.status-select').forEach(sel => {
+    applyStatusStyle(sel);
+    sel.disabled = true;
+  });
+  document.querySelectorAll('select.timeline-select').forEach(sel => {
+    sel.disabled = true;
+  });
+
+  initFirebase();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeRMSModal();
+      document.getElementById('loginModal').classList.remove('open');
+      document.getElementById('addRowModal').classList.remove('open');
+    }
+  });
+});
+</script>
 </body>
 </html>
