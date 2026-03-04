@@ -947,5 +947,49 @@
   </div>
 </div>
 
+  
+<!-->Firebase DB Script</-->
+  <script type="module">
+    import { initializeApp } from 
+    "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  
+    import { getFirestore, collection, getDocs }
+    from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQICBEn5k0gvPjyJ164le7zG4Z1wmvV5o",
+      authDomain: "tps-rms-dashboard.firebaseapp.com",
+      projectId: "tps-rms-dashboard",
+      storageBucket: "tps-rms-dashboard.firebasestorage.app",
+      messagingSenderId: "178185203959",
+      appId: "1:178185203959:web:e8543cab9da712789263f2"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+  
+    async function loadProjects() {
+      const querySnapshot = await getDocs(collection(db, "projects"));
+      const container = document.getElementById("projectList");
+      container.innerHTML = "";
+  
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        container.innerHTML += `
+          <div>
+            <h3>${data.name}</h3>
+            <p>Status: ${data.status}</p>
+            <p>Owner: ${data.owner}</p>
+          </div>
+          <hr/>
+        `;
+      });
+    }
+  
+    loadProjects();
+  </script>
+<!-->Firebase DB Script</-->
+
+
 </body>
 </html>
