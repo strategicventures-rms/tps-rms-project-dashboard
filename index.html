@@ -218,9 +218,53 @@
     </div>
   </div>
 
-  <!--div>
-    <div id=testdbread></div>
-  </div-->
+  <!--*
+  DB Read set
+  -->
+  <style>
+    .db-preview {
+  margin-top:20px;
+  border:1px solid var(--border-soft);
+  border-radius:10px;
+  background:#ffffff;
+  padding:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+.db-preview h3 {
+  font-size:14px;
+  margin-bottom:10px;
+  color:var(--text-main);
+}
+
+.db-card {
+  border:1px solid var(--border-soft);
+  border-radius:8px;
+  padding:10px 12px;
+  margin-bottom:10px;
+  background:#f9fbff;
+  font-size:12px;
+}
+
+.db-card strong {
+  color:var(--accent);
+}
+
+.db-json {
+  font-family:monospace;
+  font-size:11px;
+  color:#555;
+  margin-top:6px;
+  white-space:pre-wrap;
+}
+  </style>
+
+  <div class="db-preview">
+    <h3>Firestore Data Preview</h3>
+    <div id="testdbread"></div>
+  </div>
+
+  
   <!-- ═══ PAGE HEADER ═══ -->
   <div class="header">
     <div class="title-block">
@@ -760,23 +804,33 @@ testdbread
 // Read all documents from collection
 async function loadData() {
 
-  const querySnapshot = await getDocs(collection(db, "dashboard"));
+  if (!db) return;
 
-  let output = "";
+  const snapshot = await db.collection("dashboard").get();
 
-  querySnapshot.forEach((doc) => {
+  const container = document.getElementById("testdbread");
+
+  if (snapshot.empty) {
+    container.innerHTML = "<div class='db-card'>No documents found</div>";
+    return;
+  }
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+
     const data = doc.data();
 
-    output += `
-      <div style="border:1px solid #ccc;padding:10px;margin:10px">
-        <b>ID:</b> ${doc.id} <br>
-        <b>Data:</b> ${JSON.stringify(data)}
+    html += `
+      <div class="db-card">
+        <strong>Document:</strong> ${doc.id}
+        <div class="db-json">${JSON.stringify(data, null, 2)}</div>
       </div>
     `;
+
   });
 
-  document.getElementById("testdbread").innerHTML = output;
-
+  container.innerHTML = html;
 }
 // Read all documents from collection
 
@@ -809,9 +863,17 @@ function initFirebase() {
       isAdmin = !!user;
       setAdminMode(isAdmin);
       updateAdminBar(user);
+
+      if (user) {
+          startSync();   // start loading DB
+          loadData();
+      } else {
+          stopSync();    // stop listening
+      }
     });
 
-    startSync();
+    //startSync();
+    
   } catch(e) {
     statusEl.textContent = '⚠️ Firebase error: ' + e.message;
     statusEl.style.color = '#d32f2f';
